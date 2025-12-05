@@ -3,6 +3,12 @@ from .base import BaseModel
 from sqlalchemy.orm import validates, relationship
 
 class Game(BaseModel):
+    """Model representing a game available for crowdfunding.
+    
+    Games are the primary content of the crowdfunding platform. Each game
+    belongs to one category and one publisher, and includes details like
+    title, description, and star rating.
+    """
     __tablename__ = 'games'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -20,18 +26,53 @@ class Game(BaseModel):
     
     @validates('title')
     def validate_name(self, key, name):
+        """Validate the game title field.
+        
+        Args:
+            key: The field name being validated
+            name: The game title value
+            
+        Returns:
+            The validated title
+            
+        Raises:
+            ValueError: If title is invalid
+        """
         return self.validate_string_length('Game title', name, min_length=2)
     
     @validates('description')
     def validate_description(self, key, description):
+        """Validate the game description field.
+        
+        Args:
+            key: The field name being validated
+            description: The game description value
+            
+        Returns:
+            The validated description
+            
+        Raises:
+            ValueError: If description is invalid
+        """
         if description is not None:
             return self.validate_string_length('Description', description, min_length=10, allow_none=True)
         return description
     
     def __repr__(self):
+        """Return string representation of the game.
+        
+        Returns:
+            A string representation of the game with title and ID
+        """
         return f'<Game {self.title}, ID: {self.id}>'
 
     def to_dict(self):
+        """Convert the game to a dictionary representation.
+        
+        Returns:
+            A dictionary containing the game's data including id, title,
+            description, publisher info, category info, and star rating
+        """
         return {
             'id': self.id,
             'title': self.title,
